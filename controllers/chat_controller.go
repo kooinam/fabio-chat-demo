@@ -30,7 +30,7 @@ func (controller *ChatController) join(connection *controllers.Connection) (inte
 	return nil, err
 }
 
-// message used for player to join a room
+// message used for player to send message message to room
 func (controller *ChatController) message(connection *controllers.Connection) (interface{}, error) {
 	var err error
 	roomID := connection.ParamsStr("roomID")
