@@ -1,0 +1,130 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.0/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.19/lodash.min.js"></script>
+
+<style>
+  #messages-list {
+    width: 100%;
+    margin: 12px 0;
+    padding: 12px;
+    border: 1px solid #ccc!important;
+  }
+</style>
+
+<script>
+  var roomSocket = null;
+  var currentRoomID = null;
+
+  $(document).ready(function() {
+    const url = 'http://0.0.0.0:8000/chat';
+    roomSocket = io(url, {
+      transports: ['websocket'],
+    });
+
+    // subscribing to message event and append to messages list
+    roomSocket.on("Message", function (raw) {
+      const data = JSON.parse(raw);
+      const event = data.event;
+      const eventTime = new Date(event.createdAt * 1000).toLocaleString("en-US");
+
+      $('#messages-list').append(`
+        <div>
+          [${eventTime}]:
+          ${event.parameters.message}
+        </div>
+      `);
+    });
+
+    $('#messages').hide();
+  })
+
+  // join room and start sending and subscribing chat events
+  function join(roomID) {
+    const parameters = JSON.stringify({
+      roomID: roomID,
+    });
+
+    roomSocket.emit('Join', parameters, function() {
+      currentRoomID = roomID;
+
+      $('#messages').show();
+      $('#messages-list').html('');
+      $('#room-label').html(`Room ${currentRoomID}`);
+    });
+  }
+
+  // send message
+  function message(msg) {
+    const parameters = JSON.stringify({
+      roomID: currentRoomID,
+      message: $('#message-input').val(),
+    });
+
+    roomSocket.emit('Message', parameters, function() {
+      $('#message-input').val('');
+    });
+  }
+</script>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          Room 1
+        </div>
+        <div class="panel-body">
+          <button onclick="join('1')">
+            JOIN
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          Room 2
+        </div>
+        <div class="panel-body">
+          <button onclick="join('2')">
+            JOIN
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          Room 3
+        </div>
+        <div class="panel-body">
+          <button onclick="join('3')">
+            JOIN
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" id="messages">
+    <div class="col-sm-12">
+      <div class="label label-primary" id="room-label"></div>
+    </div>
+    <div class="col-sm-12">
+      <h4>Messages:</h4>
+      <div id="messages-list">
+      </div>
+    </div>
+    <div class="col-sm-12">
+      <input type="text" id="message-input" placeholder="Type some messages" />
+      <button onclick="message()">
+        Submit
+      </button>
+    </div>
+  </div>
+</div>
