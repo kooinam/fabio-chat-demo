@@ -10,9 +10,9 @@ import (
 func main() {
 	fab.Setup()
 
-	fab.RegisterController("chat", &controllers.ChatController{})
+	fab.ControllerManager().RegisterController("chat", &controllers.ChatController{})
 
-	fab.Serve(func() {
+	fab.ControllerManager().Serve(func() {
 		fs := http.FileServer(http.Dir("./demo"))
 		http.Handle("/demo/", http.StripPrefix("/demo/", fs))
 	})

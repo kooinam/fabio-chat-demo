@@ -9,35 +9,35 @@ import (
 type ChatController struct {
 }
 
-// AddBeforeActions used to add before actions callbacks
-func (controller *ChatController) AddBeforeActions(callbacksHandler *controllers.CallbacksHandler) {
+// RegisterBeforeHooks used to register before action hooks
+func (controller *ChatController) RegisterBeforeHooks(hooksHandler *controllers.HooksHandler) {
 }
 
-// AddActions used to add actions
-func (controller *ChatController) AddActions(actionsHandler *controllers.ActionsHandler) {
-	actionsHandler.AddAction("Join", controller.join)
-	actionsHandler.AddAction("Message", controller.message)
+// RegisterActions used to add actions
+func (controller *ChatController) RegisterActions(actionsHandler *controllers.ActionsHandler) {
+	actionsHandler.RegisterAction("Join", controller.join)
+	actionsHandler.RegisterAction("Message", controller.message)
 }
 
 // join used for player to join a room
-func (controller *ChatController) join(connection *controllers.Connection) (interface{}, error) {
+func (controller *ChatController) join(context *controllers.Context) (interface{}, error) {
 	var err error
-	roomID := connection.ParamsStr("roomID")
+	roomID := context.ParamsStr("roomID")
 
 	// leave all previously joined rooms, and join new room
-	connection.SingleJoin(roomID)
+	context.SingleJoin(roomID)
 
 	return nil, err
 }
 
 // message used for player to send message message to room
-func (controller *ChatController) message(connection *controllers.Connection) (interface{}, error) {
+func (controller *ChatController) message(context *controllers.Context) (interface{}, error) {
 	var err error
-	roomID := connection.ParamsStr("roomID")
-	message := connection.ParamsStr("message")
+	roomID := context.ParamsStr("roomID")
+	message := context.ParamsStr("message")
 
 	// broadcast message to room
-	fab.BroadcastEvent("chat", roomID, "Message", nil, fab.H{
+	fab.ControllerManager().BroadcastEvent("chat", roomID, "Message", nil, fab.H{
 		"message": message,
 	})
 
