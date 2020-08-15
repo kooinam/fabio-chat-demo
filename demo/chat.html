@@ -19,7 +19,7 @@
   var currentRoomID = null;
 
   $(document).ready(function() {
-    const url = 'http://0.0.0.0:8000/chat';
+    const url = '/chat';
     roomSocket = io(url, {
       transports: ['websocket'],
     });
