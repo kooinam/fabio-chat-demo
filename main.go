@@ -12,7 +12,7 @@ func main() {
 
 	fab.ControllerManager().RegisterController("chat", &controllers.ChatController{})
 
-	fab.ControllerManager().Serve(func() {
+	fab.ControllerManager().Serve("8000", func() {
 		fs := http.FileServer(http.Dir("./demo"))
 		http.Handle("/demo/", http.StripPrefix("/demo/", fs))
 	})

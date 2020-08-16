@@ -3,6 +3,7 @@ package controllers
 import (
 	fab "github.com/kooinam/fabio"
 	"github.com/kooinam/fabio/controllers"
+	"github.com/kooinam/fabio/helpers"
 )
 
 // ChatController used for chat purposes
@@ -37,7 +38,7 @@ func (controller *ChatController) message(context *controllers.Context) (interfa
 	message := context.ParamsStr("message")
 
 	// broadcast message to room
-	fab.ControllerManager().BroadcastEvent("chat", roomID, "Message", nil, fab.H{
+	fab.ControllerManager().BroadcastEvent("chat", roomID, "Message", nil, helpers.H{
 		"message": message,
 	})
 
