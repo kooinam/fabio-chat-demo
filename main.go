@@ -6,16 +6,35 @@ import (
 	"net/http"
 
 	fab "github.com/kooinam/fabio"
+	"github.com/kooinam/fabio/helpers"
+	"github.com/kooinam/fabio/simplerecords"
 )
 
 func main() {
 	fab.Setup()
 
-	models.BotsCollection = fab.ModelManager().CreateCollection("bot", models.MakeBot)
+	adapter := simplerecords.MakeAdapter()
+	fab.ModelManager().RegisterAdapter("simple", adapter)
 
-	models.BotsCollection.Create("1")
-	models.BotsCollection.Create("2")
-	models.BotsCollection.Create("3")
+	models.BotsCollection = fab.ModelManager().RegisterCollection("simple", "bot", models.MakeBot)
+
+	botsValues := []helpers.H{
+		helpers.H{
+			"roomID": "1",
+		},
+		helpers.H{
+			"roomID": "2",
+		},
+		helpers.H{
+			"roomID": "3",
+		},
+	}
+
+	for _, botValues := range botsValues {
+		bot, _ := models.BotsCollection.Create(botValues)
+
+		bot.Memoize()
+	}
 
 	fab.ControllerManager().RegisterController("chat", &controllers.ChatController{})
 

@@ -4,5 +4,6 @@ go 1.14
 
 require (
 	github.com/gorilla/websocket v1.4.2 // indirect
-	github.com/kooinam/fabio v0.0.37
+	github.com/kooinam/fabio v0.0.49
+	github.com/markbates/pkger v0.17.0
 )
