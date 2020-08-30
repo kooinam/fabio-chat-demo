@@ -32,8 +32,8 @@ func MakeBot(collection *models.Collection, hooksHandler *models.HooksHandler) m
 }
 
 // initialize used to initialize bot
-func (bot *Bot) initialize(dict *helpers.Dictionary) {
-	bot.roomID = dict.ValueStr("roomID")
+func (bot *Bot) initialize(attributes *helpers.Dictionary) {
+	bot.roomID = attributes.ValueStr("roomID")
 }
 
 func (bot *Bot) afterMemoize() {
