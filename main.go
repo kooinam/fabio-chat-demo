@@ -26,7 +26,7 @@ func main() {
 			"roomID": roomID,
 		})
 
-		if result.Success() {
+		if result.StatusSuccess() {
 			bot := result.Item().(*Models.Bot)
 
 			bot.Memoize()
